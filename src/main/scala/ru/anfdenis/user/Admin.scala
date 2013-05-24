@@ -7,6 +7,7 @@ import spray.httpx.unmarshalling.Unmarshaller
 
 import spray.json._
 import ru.anfdenis.json.TestJsonProtocol._
+import java.io.ByteArrayInputStream
 
 
 /**
@@ -37,10 +38,10 @@ object Admin {
       }
     }
 
-  implicit val xmlToAdmin =
+  implicit val adminUnmarshaller =
     Unmarshaller[Admin](`application/xml`, `application/json`) {
       case HttpBody(contentType, buffer) => contentType match {
-        case ContentType(`application/xml`, _) => fromXml(xml.XML.load(buffer.mkString))
+        case ContentType(`application/xml`, _) =>  fromXml(xml.XML.load(new ByteArrayInputStream(buffer)))
         case ContentType(`application/json`, _) => buffer.mkString.asJson.convertTo[Admin]
       }
     }
