@@ -26,7 +26,7 @@ class Client(id: Option[Int], name: String, val clientOnly: String) extends User
     </client>
 
   override def equals(obj: Any): Boolean = obj match {
-    case client: Client => client.id == id && client.name == name && client.clientOnly == clientOnly
+    case c: Client => c.id == id && c.name == name && c.clientOnly == clientOnly && c.admin == admin
     case _ => false
   }
 }
@@ -35,15 +35,20 @@ object Client {
 
   implicit val clientMarshaller =
     Marshaller.of[Client](`application/xml`, `application/json`) {
-      (client, contentType, ctx) => contentType match {
+      (client: Client, contentType: ContentType, ctx: MarshallingContext) => contentType match {
         case ContentType(`application/xml`, _) => ctx.marshalTo(HttpBody(contentType, client.toXml.toString()))
         case ContentType(`application/json`, _) => ctx.marshalTo(HttpBody(contentType, client.toJson.toString()))
       }
     }
 
-  implicit val xmlToClient =
-    Unmarshaller[Client](`application/xml`) {
-      case HttpBody(contentType, buffer) => fromXml(xml.XML.load(new ByteArrayInputStream(buffer)))
+  implicit val clientUnmarshaller =
+    Unmarshaller[Client](`application/xml`, `application/json`) {
+      case HttpBody(contentType, buffer) => contentType match {
+        case ContentType(`application/xml`, _) => fromXml(xml.XML.load(new ByteArrayInputStream(buffer)))
+        case ContentType(`application/json`, _) => buffer.mkString.asJson.convertTo[Client]
+      }
+
+
     }
 
   def fromXml(node: xml.NodeSeq): Client = {

@@ -6,6 +6,7 @@ import scala.slick.driver.PostgresDriver.simple._
 
 import Database.threadLocalSession
 import ru.anfdenis.db._
+import ru.anfdenis.InitData
 
 /**
  * Denis Anfertev
@@ -29,5 +30,5 @@ class SimpleGetActor extends Actor {
 }
 
 object SimpleGetActor {
-  lazy val db = Database.forURL("jdbc:postgresql://192.168.1.55:5432/users?user=postgres&password=RAPtor1234!", driver = "org.postgresql.Driver")
+  lazy val db = InitData.db
 }

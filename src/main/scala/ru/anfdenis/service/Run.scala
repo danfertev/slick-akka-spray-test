@@ -9,12 +9,15 @@ import ru.anfdenis.user.Client
 import scala.concurrent.Await
 import akka.actor.{Props, ActorSystem}
 import spray.http.MediaTypes._
+import ru.anfdenis.InitData
 
 /**
  * Denis Anfertev
  * 23.05.13 17:14
  */
 object Run extends App with SimpleRoutingApp {
+  InitData.main(Array())
+
   val actorSystem = ActorSystem("simple-system")
 
   val actorService = actorSystem.actorOf(Props[SimpleGetActor])
