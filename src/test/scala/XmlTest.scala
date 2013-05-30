@@ -37,4 +37,19 @@ class XmlTest extends FunSuite {
       c
     }
   }
+
+  val n = 100000
+
+  test(s"$n objects to xml") {
+    val clients = Array.fill(n)(Client(1, "client", "clientOnly"))
+    val xmlClients = Array.fill(n)(Client.fromXml(<client id="1">
+        <name>client</name>
+        <clientOnly>clientOnly</clientOnly>
+        <admin id ="-1">
+          <name>admin</name>
+          <adminOnly>adminOnly</adminOnly>
+        </admin>
+      </client>))
+    clients.map(_.toXml) === xmlClients
+  }
 }
